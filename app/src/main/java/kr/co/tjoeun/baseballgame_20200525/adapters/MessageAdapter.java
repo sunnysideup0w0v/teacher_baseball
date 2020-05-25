@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +42,8 @@ public class MessageAdapter extends ArrayAdapter<Message> {
 //        화면의 컴포넌트들을 가져오는 코드들
         FrameLayout myMessageLayout = row.findViewById(R.id.myMessageLayout);
         FrameLayout cpuMessageLayout = row.findViewById(R.id.cpuMessageLayout);
+        TextView myMessageTxt = row.findViewById(R.id.myMessageTxt);
+        TextView cpuMessageTxt = row.findViewById(R.id.cpuMessageTxt);
 
 //        이번에 보여줘야할 채팅 메세지
         Message data = mList.get(position);
@@ -50,11 +53,15 @@ public class MessageAdapter extends ArrayAdapter<Message> {
             myMessageLayout.setVisibility(View.VISIBLE);
             cpuMessageLayout.setVisibility(View.GONE);
 
+            myMessageTxt.setText(data.getContent());
+
         }
         else {
 
             myMessageLayout.setVisibility(View.GONE);
             cpuMessageLayout.setVisibility(View.VISIBLE);
+
+            cpuMessageTxt.setText(data.getContent());
 
         }
 
