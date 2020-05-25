@@ -24,4 +24,25 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/speech_bubble_computer" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="30dp"
+            android:textColor="#000000"
+            android:text="CPU 대사" />
+
+    </FrameLayout>
+
+
 </LinearLayout>
