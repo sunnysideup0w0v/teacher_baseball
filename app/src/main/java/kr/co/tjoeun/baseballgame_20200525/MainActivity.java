@@ -5,6 +5,7 @@ import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
 import android.os.CpuUsageInfo;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -51,6 +52,7 @@ public class MainActivity extends BaseActivity {
 //                세자리가 아니면 등록 거부
                 if(inputValue.length() != 3){
                     Toast.makeText(mContext, "3자리 숫자로 입력해주세요.", Toast.LENGTH_SHORT).show();
+                    binding.numEdt.setText("");
                     return;
                 }
 //                새로운 메세지로 등록
@@ -151,21 +153,35 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }
-        // 컴퓨터가 몇 스트라이크 몇 볼인지 답장하고, 밑으로 끌어내리기.
-        messages.add(new Message(String.format("%dS %dB 입니다.",strike,ball),"cpu"));
-        messageAdapter.notifyDataSetChanged();
-        binding.messageListView.smoothScrollToPosition(messages.size()-1);
+        final int CopyStrike = strike;
+        final int Copyball = ball;
+        Handler myHandler = new Handler();
+        myHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 컴퓨터가 몇 스트라이크 몇 볼인지 답장하고, 밑으로 끌어내리기.
+                messages.add(new Message(String.format("%dS %dB 입니다.",CopyStrike,Copyball),"cpu"));
+                messageAdapter.notifyDataSetChanged();
+                binding.messageListView.smoothScrollToPosition(messages.size()-1);
+            }
+        }, 500);
+
         // 3s > 축하메세지 + 몇 번 만에 맞췄는지 + 게임종료
         if(strike == 3){
-            messages.add(new Message("정답입니다!","cpu"));
-            messages.add(new Message(String.format("%d회 만에 맞췄습니다.",tryCount),"cpu"));
-            messageAdapter.notifyDataSetChanged();
-            binding.messageListView.smoothScrollToPosition(messages.size()-1);
-            // editTxt와 sendBtn을 더 이상 사용하지 못 하도록 막아주는 코드.
-            binding.numEdt.setEnabled(false);
-            binding.sendBtn.setEnabled(false);
-            // 종료 안내 토스트
-            Toast.makeText(mContext, "이용해주셔서 감사합니다.", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    messages.add(new Message("정답입니다!","cpu"));
+                    messages.add(new Message(String.format("%d회 만에 맞췄습니다.",tryCount),"cpu"));
+                    messageAdapter.notifyDataSetChanged();
+                    binding.messageListView.smoothScrollToPosition(messages.size()-1);
+                    // editTxt와 sendBtn을 더 이상 사용하지 못 하도록 막아주는 코드.
+                    binding.numEdt.setEnabled(false);
+                    binding.sendBtn.setEnabled(false);
+                    // 종료 안내 토스트
+                    Toast.makeText(mContext, "이용해주셔서 감사합니다.", Toast.LENGTH_SHORT).show();
+                }
+            },1000);
         }
     }
 
