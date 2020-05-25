@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,11 @@ public class MainActivity extends BaseActivity {
 
 //                전송버튼 누르면 => 타이핑 된 값을 받아오기
                 String inputValue = binding.numEdt.getText().toString();
-
+//                세자리가 아니면 등록 거부
+                if(inputValue.length() != 3){
+                    Toast.makeText(mContext, "3자리 숫자로 입력해주세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 //                새로운 메세지로 등록
 
                 messages.add(new Message(inputValue, "Me"));
@@ -54,6 +59,8 @@ public class MainActivity extends BaseActivity {
 
 //                리스트뷰를 맨 밑으로 끌어내려주자.
                 binding.messageListView.smoothScrollToPosition(messages.size()-1);
+                //스트라이크, 볼 계산
+                checkStrikeAndBalls(inputValue);
 
             }
         });
@@ -65,6 +72,7 @@ public class MainActivity extends BaseActivity {
 
         messageAdapter = new MessageAdapter(mContext, R.layout.message_list_item, messages);
         binding.messageListView.setAdapter(messageAdapter);
+        
 
 
         makeQuestion();
@@ -114,7 +122,30 @@ public class MainActivity extends BaseActivity {
 
 //        어댑터가 사용하는 List의 내용 변경(메세지 추가)이 생겼으니 새로고침.
         messageAdapter.notifyDataSetChanged();
+    }
+    void checkStrikeAndBalls(String inputVal){
+        int inputNum = Integer.parseInt(inputVal);
+        int[] myNumbers = new int[3];
+        myNumbers[0] = inputNum/100;
+        myNumbers[1] = inputNum/10 % 10;
+        myNumbers[2] = inputNum%10;
 
+        int strike = 0;
+        int ball = 0;
+        for(int i=0;i<myNumbers.length;i++){
+            for(int j=0;j<questionArr.length;j++){
+                // 스트라이크나 볼이 될 가능성이 있따!
+                if(myNumbers[i]==questionArr[j]){
+                    // index가 같음 (strike)
+                    if(i==j){
+                        strike++;
+                    } else {
+                        // index가 다름 (Ball)
+                        ball++;
+                    }
+                }
+            }
+        }
     }
 
 }
