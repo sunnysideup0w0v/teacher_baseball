@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
+import android.os.CpuUsageInfo;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -21,6 +22,8 @@ public class MainActivity extends BaseActivity {
 
 //    문제로 사용될 3자리 숫자 배열
     int[] questionArr = new int[3];
+//    정답 입력 시도 횟수
+    int tryCount = 0;
 
 //    채팅 내역으로 사용할 ArrayList
     List<Message> messages = new ArrayList<>();
@@ -59,6 +62,8 @@ public class MainActivity extends BaseActivity {
 
 //                리스트뷰를 맨 밑으로 끌어내려주자.
                 binding.messageListView.smoothScrollToPosition(messages.size()-1);
+                // 올바르게 시도했다면 시도 횟수를 1씩 증가시켜준다.
+                tryCount++;
                 //스트라이크, 볼 계산
                 checkStrikeAndBalls(inputValue);
 
@@ -145,6 +150,22 @@ public class MainActivity extends BaseActivity {
                     }
                 }
             }
+        }
+        // 컴퓨터가 몇 스트라이크 몇 볼인지 답장하고, 밑으로 끌어내리기.
+        messages.add(new Message(String.format("%dS %dB 입니다.",strike,ball),"cpu"));
+        messageAdapter.notifyDataSetChanged();
+        binding.messageListView.smoothScrollToPosition(messages.size()-1);
+        // 3s > 축하메세지 + 몇 번 만에 맞췄는지 + 게임종료
+        if(strike == 3){
+            messages.add(new Message("정답입니다!","cpu"));
+            messages.add(new Message(String.format("%d회 만에 맞췄습니다.",tryCount),"cpu"));
+            messageAdapter.notifyDataSetChanged();
+            binding.messageListView.smoothScrollToPosition(messages.size()-1);
+            // editTxt와 sendBtn을 더 이상 사용하지 못 하도록 막아주는 코드.
+            binding.numEdt.setEnabled(false);
+            binding.sendBtn.setEnabled(false);
+            // 종료 안내 토스트
+            Toast.makeText(mContext, "이용해주셔서 감사합니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
